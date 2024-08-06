@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".auth.LoginActivity">
+
+    <ImageView
+        android:layout_width="160dp"
+        android:layout_height="100dp"
+        android:src="@drawable/ic_my_second_logo_foreground"/>
+
+    <EditText
+        android:id="@+id/edtLogEmailId"
+        android:background="@drawable/btn_rounded3"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="50sp"
+        android:layout_marginTop="20sp"
+        android:hint="@string/enter_email"
+        android:inputType="textEmailAddress"/>
+
+    <EditText
+        android:id="@+id/edtLogPass"
+        android:background="@drawable/btn_rounded3"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="50sp"
+        android:layout_marginTop="10sp"
+        android:hint="@string/enter_pass"
+        android:inputType="textPassword"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20sp"
+        android:text="@string/login_stmt"
+        android:background="@drawable/btn_rounded"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:id="@+id/btnLog"/>
+
+    <TextView
+        android:id="@+id/txtLogNotAUser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/notauser"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginTop="5sp"
+        android:textSize="15sp"
+        android:textColor="@color/colorPrimary"/>
+
+</LinearLayout>

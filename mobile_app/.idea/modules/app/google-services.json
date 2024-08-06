@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "404881374763",
+    "firebase_url": "https://raternet-isp-app.firebaseio.com",
+    "project_id": "raternet-isp-app",
+    "storage_bucket": "raternet-isp-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:404881374763:android:6a901c1e3a9d584bc7b46e",
+        "android_client_info": {
+          "package_name": "com.example.raternet_isp_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "404881374763-7n2b8pbf6hnmopukn8tahbdsfij4m276.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.raternet_isp_app",
+            "certificate_hash": "4bb013b98188e0bc97bd750baa5c771f07473162"
+          }
+        },
+        {
+          "client_id": "404881374763-3s1ukl8oqaq660foi7ovkf9na2uune60.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCxXZuqxQycwZ74GtG757Z6Mn5IystIYU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "404881374763-3s1ukl8oqaq660foi7ovkf9na2uune60.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

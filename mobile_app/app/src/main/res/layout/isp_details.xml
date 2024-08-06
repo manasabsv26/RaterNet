@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/isp_detail"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/org"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:background="@drawable/btn_rounded3"
+        android:layout_centerHorizontal="true"
+        android:text="Organization"
+        android:textSize="20dp"/>
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/isp_speed_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/org"
+        android:layout_margin="10dp"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/holo_green_dark"
+        android:text="Speed"
+        android:textSize="40dp"/>
+
+
+
+
+    <TextView
+        android:id="@+id/discuss"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/isp_speed_up"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:padding="10dp"
+        android:textSize="20dp"
+        android:textColor="@color/white"
+        android:background="@drawable/btn_rounded"
+        android:text="Discuss Issues"/>
+
+
+
+
+</RelativeLayout>

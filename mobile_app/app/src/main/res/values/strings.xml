@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">RaterNet</string>
+    <string name="welcome">Welcome to RaterNet</string>
+    <string name="tagline">Net.Set.Gooo!</string>
+    <string name="notauser">Not a User? Register</string>
+    <string name="login_stmt">Login</string>
+    <string name="register_stmt">Register</string>
+    <string name="enter_email">Enter Email</string>
+    <string name="enter_pass">Enter Password</string>
+    <string name="verify_pass">Verify Password</string>
+    <string name="enter_name">Enter Your Name</string>
+    <string name="enter_phno">Enter Phone Number</string>
+    <string name="already_user">Already a User? Log in</string>
+    <string name="emailerror">Enter valid email</string>
+    <string name="namerror">Enter a valid Name</string>
+    <string name="passerror">Enter valid password</string>
+    <string name="verifypasserror">Passwords don\'t match</string>
+    <string name="wifi">WiFi</string>
+    <string name="broadband">BroadBand</string>
+    <string name="data">Data</string>
+    <string name="upload_pro_pic">Tap to Upload your Profile Picture</string>
+    <string name="submit">Submit</string>
+    <string name="feedback_error">Enter Feedback</string>
+    <string name="demoisp_text">This is Demo ISP</string>
+    <string name="demotype_text">This is Type of Network</string>
+    <string name="demodate_text">This is Demo Date</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+    <string name="update_ratings">Update Ratings</string>
+    <string name="update">Update</string>
+    <string name="title_activity_search_network">SearchNetworkActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="issueTitle_error">Enter Issue Title</string>
+    <string name="issueDetails_error">Enter Issue Details</string>
+
+    <string name="price">Price</string>
+    <string name="service">Service</string>
+    <string name="speed">Speed</string>
+    <string name="overall">Overall</string>
+    <string name="feedback">Feedback</string>
+
+    <string name="newDiscussion">New Discussion</string>
+    <string name="provideDetails">Please Provide Details</string>
+
+    <string name="demoissue_title">Sample Issue Title</string>
+    <string name="demoissue_type">Sample Issue Type</string>
+    <string name="demouser_email">Sample User Email</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <string-array name="issueTypes">
+        <item>Speed</item>
+        <item>Service</item>
+        <item>Plan</item>
+        <item>Price</item>
+        <item>Other</item>
+    </string-array>
+
+</resources>
