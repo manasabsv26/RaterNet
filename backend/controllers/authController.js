@@ -5,6 +5,7 @@ const catchAsync = require('./../utils/catchAsync');
 const express = require('express');
 const crypto = require('crypto');
 const signToken = (id,name,asn) => {
+    console.log("Name, id and asn", id, name, asn)
     return jwt.sign({ id: id,name:name,asn:asn}, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
 }
 
@@ -35,22 +36,42 @@ const createSendToken = (user, statusCode, res) => {
     }
     //for user
 exports.signup = catchAsync(async(req, res, next) => {
-    const newUser = await User.create({
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password,
-        photo: req.body.photo,
-        asn : req.body.asn,
-        contact : req.body.contact,
-        services : req.body.services,
-        webUrl : req.body.webURL,
-        //passwordChangedAt: req.body.passwordChangedAt
-    });
 
-    //here  in create we have not used req.body only bcoz  it will create 
-    // a security flaw by giving right to the user to become whichever role user wants
-    createSendToken(newUser, 201, res);
+    console.log('Collection Name:', User.collection.collectionName);
+    try {
+        const newUser = await User.create({
+            name: req.body.name,
+            email: req.body.email,
+            password: req.body.password,
+            photo: req.body.photo,
+            asn: req.body.asn,
+            contact: req.body.contact,
+            services: req.body.services,
+            webURL: req.body.webURL
+            //passwordChangedAt: req.body.passwordChangedAt
+        });
 
+        //here  in create we have not used req.body only bcoz  it will create 
+        // a security flaw by giving right to the user to become whichever role user wants
+        createSendToken(newUser, 201, res);
+
+    } catch (error) {
+        //Check for duplicate key error (MongoError code 11000)
+        if (error.code === 11000 && error.keyValue.email) {
+            return res.status(400).json({
+                status: 'fail',
+                message: 'Email already exists. Please use a different email.'
+            });
+        }
+
+        // For other errors
+        console.error('Signup Error:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Internal Server Error'
+        });
+    }
+    
 });
 
 
@@ -63,12 +84,14 @@ exports.login = catchAsync(async(req, res, next) => {
 
     }
     //checking if user exists
-    const user = await User.findOne({ email }).select('+ password ')
+    const user = await User.findOne({ email }).select('+password')
 
 
     if (!user || !await user.correctPassword(password, user.password)) {
         return next(new Apperror('incorrect email or password', 401));
     }
+
+    console.log("User is: ",user)
     // req.user = user;
     // console.log(user);
     //if everything is ok,send token to the client

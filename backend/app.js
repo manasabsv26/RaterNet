@@ -12,6 +12,7 @@ const globalErrorHandler = require('./controllers/errorController');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 
+console.log('app.js has been loaded!');
 
 const app = express();
 
@@ -32,6 +33,12 @@ if (process.env.NODE_ENV === 'development') {
 //     message: 'Too many requests from this IP, please try again in an hour!'
 // });
 // app.use('/', limiter);
+app.use(cors({
+    origin: 'http://localhost:3000',  //Allow requests from React app
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT'],
+    credentials: true
+}));
+
 app.use(cors());
 
 // Body parser, reading data from body into req.body

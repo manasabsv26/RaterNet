@@ -48,14 +48,23 @@ exports.getReviewsByCid = catchAsync(async(req, res, next) => {
 exports.getReviewByCandL = catchAsync(async(req, res, next) => {
 
     const company_id = req.params.id
-    const locality = req.body.locality
-    const newReview = await Review.find({ $and: [{company_id:company_id},{locality:locality}]});
-    res.status(201).json({
-        status: 'success',
+    const locality = req.params.locality
 
-        data: {
-            newReview
-        }
-    })
+    const reviews = await Review.find({ 
+        company_id: company_id, 
+        locality: locality 
+    });
+
+    if (!reviews || reviews.length === 0) {
+        return res.status(404).json({
+            status: 'fail',
+            message: 'No reviews found for this locality.'
+        });
+    }
+
+    res.status(200).json({   // ✅ Changed to 200 OK
+        status: 'success',
+        data: reviews
+    });
 
 });

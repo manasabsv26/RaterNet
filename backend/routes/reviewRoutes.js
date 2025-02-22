@@ -12,7 +12,7 @@ router.route('/options/:id')
     .get(reviewController.getReviewsByCid);
 
 router.route('/locality/:id')
-    .post(reviewController.getReviewByCandL);
+    .get(reviewController.getReviewByCandL);
     
 
 module.exports = router;

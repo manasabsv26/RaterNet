@@ -8,7 +8,7 @@
         "start": "nodemon server.js",
         "debug": "ndb server.js"
     },
-    "author": "Mohit mandlecha",
+    "author": "Manasa Bellamkonda",
     "license": "ISC",
     "dependencies": {
         "all": "^0.0.0",

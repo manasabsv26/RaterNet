@@ -43,22 +43,28 @@ export const SignUpUser = (email,password,asn,name,photo,web,service)=>{
   }
 }
 
-export const getProfileDetails = (asn)=>{
-  return async dispatch=>{
-    const response = await fetch(baseUrl + "");
-    const responseData = await response.json();
-    
-    if (responseData.error) {
-      throw new Error(responseData.error.message);
-    }else {
-      dispatch({
-        type : GET_PROFILE,
-        payload : responseData
-      })
-    }
+export const getProfileDetails = (asn) => {
+  return async (dispatch) => {
+      const response = await fetch(`${baseUrl}/users/profile/${asn}`, {
+          method: 'GET',
+          headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,  
+              'Content-Type': 'application/json'
+          }
+      });
 
-  }
-}
+      const responseData = await response.json();
+
+      if (responseData.error) {
+          throw new Error(responseData.error.message);
+      } else {
+          dispatch({
+              type: GET_PROFILE,
+              payload: responseData
+          });
+      }
+  };
+};
 
 
 export const loginUser = (email, password)=>{

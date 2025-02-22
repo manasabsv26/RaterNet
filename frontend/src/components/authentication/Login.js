@@ -71,31 +71,50 @@ const Login = ({setloggedIn,setToken}) => {
     }
 
 
-    const handleSubmit = async ()=>{
+    const handleSubmit = async () => {
         if (errors.emailError || errors.passwordError) {
             return;
-         }else{
-             enqueueSnackbar('Logging in....', {variant: 'info', key: 'logging_in'});
-             try{
-                 await dispatch(loginUser(values.email,values.password));
-                 setTimeout(() => closeSnackbar('logging_in'), 3000);
-                 setTimeout(() => enqueueSnackbar('Logged in Successfully!',{
-                     variant: 'success',
-                     key: 'logged_in'
-                 }),
-                 3000);
-                 setTimeout(() => closeSnackbar('logged_in'), 6000);
-                 setloggedIn();
-                 setToken(localStorage.getItem('token'))
-                 history.push('/');
-             }catch(e){
-                 setTimeout(() => closeSnackbar('logging_in'), 3000);
-                 setTimeout(() => enqueueSnackbar(e.message, {variant: 'error', key: 'error'}), 3000);
-                 setTimeout(() => closeSnackbar('error'), 6000);
-             }
-         }
-    }
-
+        } else {
+            enqueueSnackbar('Logging in...', { variant: 'info', key: 'logging_in' });
+    
+            try {
+                const response = await fetch('http://localhost:7000/users/login', { // Adjust URL if needed
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: values.email,
+                        password: values.password
+                    })
+                });
+    
+                const responseData = await response.json();
+    
+                if (!response.ok) {
+                    throw new Error(responseData.message || 'Invalid Credentials');
+                }
+    
+                closeSnackbar('logging_in');
+                enqueueSnackbar('Logged in Successfully!', {
+                    variant: 'success',
+                    key: 'logged_in'
+                });
+    
+                // Store the token
+                localStorage.setItem('token', responseData.token);
+    
+                setloggedIn();
+                setToken(responseData.token);
+    
+                history.push('/'); // Redirect to homepage
+            } catch (e) {
+                closeSnackbar('logging_in');
+                enqueueSnackbar(e.message, { variant: 'error', key: 'error' });
+            }
+        }
+    };
+    
     return (
         <div>
             <Grid container spacing={2} direction="row" alignItems="center">
@@ -109,7 +128,6 @@ const Login = ({setloggedIn,setToken}) => {
                         variant="outlined"
                         label="Company Email Address"
                         type="email"
-                        name="email"
                         value={values.email}
                         margin="normal"
                         onChange={handleChange}
@@ -128,7 +146,6 @@ const Login = ({setloggedIn,setToken}) => {
                         type={visible? "text":"password"}
                         helperText={errors.password}
                         error={!!errors.email}
-                        name="password"
                         onChange={handleChange}
                         InputProps={{
                             endAdornment:

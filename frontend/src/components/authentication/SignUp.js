@@ -120,59 +120,54 @@ const SignUp = ({ open, setOpen }) => {
 
 
     const handleSubmit = async () => {
-        try{
-            enqueueSnackbar('Getting Network Info....', {variant: 'info', key: 'verifying'});
-            const data = await fetch("https://cors-anywhere.herokuapp.com/http://api.ipify.org/?format=json");
-            const ip = await data.json();
-            fetch(`http://ip-api.com/json/${ip.ip}?fields=isp,org,as,mobile`)
-            .then(data=>data.json())
-            .then(isp=>{
-                closeSnackbar('verifying');
-                setValues({
-                    ...values,
-                    asnNo:isp.as.split(' ')[0],
-                    ISP_name : isp.isp
-                })
-                signup();
-            });  
-        }catch(error){
-            setTimeout(() => enqueueSnackbar(error.message,{
+        try {
+            enqueueSnackbar('Signing up...', { variant: 'info', key: 'verifying' });
+
+            // Example signup data
+            const signupData = {
+                name: values.ISP_name,
+                email: values.company_email,
+                password: values.company_password,
+                photo: values.photoUrl,
+                asn: values.asnNo,
+                contact: values.contactNo,
+                services: values.services,
+                webURL: values.webUrl
+            };
+
+            // Sending data to the backend
+            const response = await fetch('http://localhost:7000/users/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(signupData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Signup failed');
+            }
+
+            const responseData = await response.json();
+
+            closeSnackbar('verifying');
+
+            enqueueSnackbar('Signup successful!', { variant: 'success' });
+
+            // Store token if needed
+            localStorage.setItem('token', responseData.token);
+            history.push('/');
+
+        } catch (error) {
+            setTimeout(() => enqueueSnackbar(error.message, {
                 variant: 'error',
                 key: 'err_asn'
-            }),
-              3000);
+            }), 3000);
+
             setTimeout(() => closeSnackbar('err_asn'), 6000);
-        }          
-    }
-
-    const signup = async ()=>{
-        try {
-            enqueueSnackbar('Signing Up....', {variant: 'info', key: 'signup'});
-            await dispatch(
-                SignUpUser(
-                    values.email,
-                    values.password,
-                    values.asnNo,
-                    values.ISP_name,
-                    values.photoUrl,
-                    values.webUrl,
-                    values.type_of_service
-                )
-            );
-            setStage((stage+1)%2);
-            closeSnackbar('signup');
-            history.push('/login')
-         } catch (error) {
-             setTimeout(() => enqueueSnackbar("Sign Up failed:(",{
-                 variant: 'error',
-                 key: 'err_su'
-             }),
-               3000);
-             setTimeout(() => closeSnackbar('err_su'), 6000);
-         }
-    }
-
-   
+        }
+    };
 
     return (
         <div>

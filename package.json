@@ -2,10 +2,10 @@
   "name": "raternet",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:7000",
+  "proxy": "http://localhost:3000",
   "scripts": {
-    "client": "cd Client && npm install && npm start",
-    "server": "cd Server && npm install && node app.js",
+    "client": "cd frontend && npm install && npm start",
+    "server": "cd backend && npm install && node server.js",
     "dev": "concurrently \"npm run client\" \"npm run server\"",
     "eject": "react-scripts eject"
   },
@@ -21,5 +21,8 @@
   "devDependencies": {
     "concurrently": "^5.3.0",
     "nodemon": "^2.0.7"
+  },
+  "dependencies": {
+    "mongodb": "^6.13.0"
   }
 }

@@ -12,24 +12,49 @@ const initialState = {
 export default (state = initialState,action)=>{
     switch (action.type){
         case FETCH_PLANS:
+            console.log("action.payload.data.plan ",action.payload.data.plan)
             return {
                 plans : action.payload
             }
         case ADD_PLAN:
+            console.log(action.payload);
             return {
-                plans: state.plans.concat(action.payload)
-            }
+                ...state,
+                plans: {
+                    ...state.plans,
+                    data: {
+                        plan: [...(state.plans.data?.plan || []), action.payload]  // Ensure it's an array
+                    }
+                }
+            };
         case UPDATE_PLAN : 
-            for(var i in state.notes){
-                if(state.plans[i]._id === action.plan._id){
-                    state.plans[i] = Object.assign(state.plans[i],action.plan)
-                    break;
+        console.log("Updating Plan:", action.payload);
+        console.log("Before Update:", state.plans.data.plan.find(p => p._id === action.payload._id));
+        console.log("After Update:", state.plans.data.plan.map(p => p._id === action.payload._id ? { ...p, ...action.payload } : p));
+        return {
+            ...state,
+            plans: {
+                ...state.plans,
+                data: {
+                    ...state.plans.data,
+                    plan:  state.plans.data.plan.map(existingPlan =>
+                        existingPlan._id === action.payload._id
+                            ? { ...existingPlan, ...action.payload }
+                            : existingPlan
+                    ) // Ensure it's an array
                 }
             }
-            return state;
+        };
         case DELETE_PLAN : 
             return {
-                plans : state.plans.filter(plan=>plan._id!==action.plan_id)
+                ...state,
+                plans:{
+                    ...state.plans,
+                    data:{
+                        ...state.plans.data,
+                        plan : state.plans.data.plan.filter(plan=>plan._id!==action.plan_id)
+                    }
+                } 
             }
         default :
             return state;

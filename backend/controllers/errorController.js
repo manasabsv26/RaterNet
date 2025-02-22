@@ -68,8 +68,6 @@ module.exports = (err, req, res, next) => {
     // console.log("in global handler");
     err.statusCode = err.statusCode || 500;
 
-    // console.log("we are in the error controller");
-    // console.log("tanuj bhai");
     // console.log(JSON.stringify(err));
     // console.log(process.env.NODE_ENV);
     if (process.env.NODE_ENV === 'development') {

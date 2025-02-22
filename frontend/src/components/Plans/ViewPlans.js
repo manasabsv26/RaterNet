@@ -97,6 +97,8 @@ const ViewPlans = (props) => {
         </React.Fragment>
     )
     
+    const plansArray = props.plans?.data?.plan || [];    
+
     return (
        <div>
             <Tabs value={value} onChange={handleChange} aria-label="simple tabs example" centered>
@@ -107,11 +109,11 @@ const ViewPlans = (props) => {
                 height : '100vh',
                 overflow : 'auto'
             }}>
-                <TabPanel value={value} index={0}>
-                    {renderPlans(props.plans.filter(plan=>plan.type_of_plan==="Prepaid"))}
+                <TabPanel value={value} index={0}>    
+                    {renderPlans(plansArray.filter(plan => plan.type_of_plan === "Prepaid"))}
                 </TabPanel>
                 <TabPanel value={value} index={1}>
-                    {renderPlans(props.plans.filter(plan=>plan.type_of_plan==="Postpaid"))}
+                    {renderPlans(plansArray.filter(plan=>plan.type_of_plan==="Postpaid"))}
                 </TabPanel>
             </div>    
        </div>

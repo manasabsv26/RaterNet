@@ -28,6 +28,7 @@ import Plans from "../Plans/Plans"
 import {Brightness4, Brightness7} from "@material-ui/icons";
 import {ThemeContext} from "../../context/ThemeContext";
 import Button from '@material-ui/core/Button';
+import Profile from '../Profile';
 
 
 const drawerWidth = 240;
@@ -190,7 +191,7 @@ const Navbar = ()=>{
                     <Route exact path='/login' component={()=>
                     <Login setloggedIn={setLogin}  
                         setToken={setToken}/>}/>
-                    <Route exact path='/profile' component={CompanyProfile}/>
+                    <Route exact path='/profile' component={Profile}/>
                     <Route exact path='/plans' component={Plans}/>
                 </Switch>
             </main>

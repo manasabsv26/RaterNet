@@ -30,7 +30,6 @@ const userSchema = new mongoose.Schema({
     },
     contact : {
         type: Number,
-        required:true
     },
     services_provided : {
         type : String

@@ -1,24 +1,19 @@
 const mongoose = require("mongoose");
 const validator = require('validator');
 const planSchema = new mongoose.Schema({
-    name: {
+    plan_name: {
         type: String,
         required: [true, 'a plan must have a name'],
-        unique: true
-    },
-    category : {
-        type: String,
-        required: true,
         unique: true
     },
     company_id: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
-        required: [true, 'a review must belong to a user, i.e. company']
+        required: [true, 'a plan must belong to a user, i.e. company']
     },
     type_of_service: {
         type : String,
-        enum : ["Data","Wi-Fi","Fiber"],
+        enum : ["Data","WiFi","Fiber/Broadband"],
         required: true
     },
     type_of_plan: {
@@ -42,7 +37,6 @@ const planSchema = new mongoose.Schema({
         type : String,
         required : true
     }
-
 
 });
 const Plan = mongoose.model('Plan', planSchema);

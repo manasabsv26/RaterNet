@@ -99,9 +99,7 @@ const Plans = (props) => {
     const [image,setImage] = React.useState(null);
 
 
-    function UploadButtons() {
-        const classes = useStyles();
-      
+    function UploadButtons({ classes }) {     
         return (
           <React.Fragment>
             <input
@@ -190,7 +188,7 @@ const Plans = (props) => {
     }
 
     const setValues = (id)=>{
-        let plan = plans.filter(plan=>plan._id===id)[0];
+        let plan = (plans.data?.plan || []).find(plan => plan._id === id);
         setFormValues({...plan})
         setisUpdate(true);
     }
@@ -219,7 +217,7 @@ const Plans = (props) => {
                         <Typography variant='h4'>
                             Add Plan
                         </Typography>
-                        {UploadButtons()}
+                        <UploadButtons classes={classes} />
                     </div>  
                 </div>
                 <TextField
