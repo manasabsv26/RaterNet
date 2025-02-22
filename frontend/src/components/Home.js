@@ -20,12 +20,21 @@ import Error from './Error/Error';
 import Geocode from 'react-geocode'
 import axios from 'axios'
 import { useHistory } from "react-router";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 require('dotenv').config({ debug: true })
+
+const mapContainerStyle = {
+    width: "100%",
+    height: "50vh",
+};
+
+const defaultCenter = { lat: 19.076, lng: 72.8777 };
 
 const Home = (props) => {
     const history = useHistory();
     const token = localStorage.getItem('token');
-    const [location,setlocation] = React.useState("Erandwane");
+    const [locations, setLocations] = useState([]);
+    const [selectedLocation, setSelectedLocation] = useState(null);
     const [reviews, setReviews] = useState([]);
     const [barData,setbarData] = React.useState([]);
     const [lineData,setlineData] = React.useState(null)
@@ -33,23 +42,46 @@ const Home = (props) => {
     const [error,setError] = React.useState(null);
     const [services,setServices] = React.useState({});
 
-    const setInitialLocation = async (id)=>{
-        /*Geocode.setApiKey(`${process.env.REACT_APP_API_URL}`);
-        Geocode.enableDebug();
-        navigator.geolocation.getCurrentPosition(function(position) {
-            Geocode.fromLatLng(position.coords.latitude, position.coords.longitude).then(
-                response => {
-                  console.log(response.results[0].formatted_address);
-                  const address = response.results[0].formatted_address;
-                  await getReviews(id,address.split(",")[2]);
-                },
-                error => {
-                  return "Erandwane"
+    const baseUrl = "http://localhost:7000"; 
+
+    const setInitialLocation = async (userId) => {
+        try {
+            // ✅ Fetch user's locations
+            const response = await axios.get(`${baseUrl}/locations/options/${userId}`);
+            const locations = response.data.data.locations; 
+    
+            console.log("User locations:", locations); // Debugging
+    
+            if (locations.length === 0) {
+                return { lat: 19.076, lng: 72.8777 }; // Default to Mumbai if no locations found
+            }
+    
+            // ✅ Convert addresses to coordinates using Geocode API
+            Geocode.setApiKey(process.env.REACT_APP_API_URL);
+            Geocode.setLanguage("en");
+            
+            const locationPromises = locations.map(async (location) => {
+                const address = `${location.address_line1}, ${location.city}, ${location.state}, ${location.pincode}`;
+                try {
+                    const geoResponse = await Geocode.fromAddress(address);
+                    const { lat, lng } = geoResponse.results[0].geometry.location;
+                    return { lat, lng };
+                } catch (error) {
+                    console.error("Error fetching coordinates for:", address, error);
+                    return null; // If error, return null (it will be filtered out later)
                 }
-              );
-          });*/
-          return "Erandwane";
-    }
+            });
+    
+            const coordinates = (await Promise.all(locationPromises)).filter(coord => coord !== null);
+            
+            console.log("Mapped coordinates:", coordinates); // Debugging
+    
+            return coordinates; // Return all locations as an array of { lat, lng }
+        } catch (error) {
+            console.error("Error fetching user locations:", error);
+            return [{ lat: 19.076, lng: 72.8777 }]; // Default to Mumbai
+        }
+    };
     
     const renderReviews = () => {
         if (!reviews || reviews.length === 0) {
@@ -58,7 +90,7 @@ const Home = (props) => {
     
         return (
             <React.Fragment>
-                {reviews.filter(review => review.locality === location).map(review => (
+                {reviews.filter(review => review.locality === selectedLocation).map(review => (
                     <Paper key={review._id} elevation={2} style={{ margin: 10, padding: 10 }}>
                         <Typography variant='h5'>{review.isp_Name}</Typography>
                         <Typography variant='h5' color='textSecondary'>{review.locality}</Typography>
@@ -83,17 +115,17 @@ const Home = (props) => {
                 alignItems: 'center'
             }}>
                 <Chip 
-                    size='large' 
+                    size='medium' 
                     label={`WiFi: ${isNaN(services['WiFi']) ? 0 : services['WiFi']}%`} 
                     color='secondary' 
                 />
                 <Chip 
-                    size='large' 
+                    size='medium' 
                     label={`Data: ${isNaN(services['Data']) ? 0 : services['Data']}%`} 
                     color='secondary' 
                 />
                 <Chip 
-                    size='large' 
+                    size='medium' 
                     label={`BroadBand: ${isNaN(services['Broadband']) ? 0 : services['Broadband']}%`} 
                     color='secondary' 
                 />
@@ -129,7 +161,26 @@ const Home = (props) => {
             }
         };
 
+        const fetchLocations = async () => {
+            if(token){
+                try{
+                    const user =jwt_decode(token);
+                    const coords = await setInitialLocation(user.id);
+                    setLocations(coords);
+
+                    if (coords.length > 0) {
+                        setSelectedLocation(coords[0]); 
+                    }
+                } catch (error){
+                    console.error('Error fetching locations');
+                }
+            } else {
+                history.push('/login')
+            }  
+        };
+
         fetchReviews();
+        fetchLocations();
     }, [token, history]);
 
     const displayData = () => {
@@ -206,10 +257,10 @@ const Home = (props) => {
         setServices(service);
     };    
     
-    const handleLocChange = (e)=>setlocation(e.target.value);
+    const handleLocChange = (e)=>setSelectedLocation(e.target.value);
     const handleSearch = async ()=>{
         let user = jwt_decode(token);
-        await getReviews(user.id,location);
+        await getReviews(user.id,selectedLocation);
     }
 
     if(error){
@@ -232,12 +283,19 @@ const Home = (props) => {
                         <TextField onChange={handleLocChange} label="Search location..." variant="outlined" fullWidth/>
                         <Button variant='contained' color='primary' onClick={handleSearch}>Search</Button>
                     </div>
-                    <Grid item xs={12} style={{position: 'relative', height: '50vh'}}>
-                        <Map 
-                        google={props.google} 
-                        zoom={4}
-                        style={{marginTop: 10,marginRight:15}}>
-                        </Map>  
+                    <Grid item xs={12} style={{ position: "relative", height: "50vh" }}>
+                        <LoadScript googleMapsApiKey={process.env.REACT_APP_API_URL}>
+                            <GoogleMap
+                                mapContainerStyle={mapContainerStyle}
+                                zoom={10}
+                                center={locations[0] || defaultCenter} // Center on first location
+                            >
+                                {/* Render markers for all locations */}
+                                {locations.map((coord, index) => (
+                                    <Marker key={index} position={coord} />
+                                ))}
+                            </GoogleMap>
+                        </LoadScript>
                     </Grid>
                     <Grid item xs={12} style={{position: 'relative',marginTop : 20}}>
                         <Box elevation={1} style={{padding:20,height: '45vh',overflow:'auto',scrollBehavior : 'smooth'}}>
@@ -250,8 +308,8 @@ const Home = (props) => {
                 <Paper elevation={2} style={{padding: 30,margin : 10}} justify="center">
                 <Typography variant="h4">
                     {reviews && reviews.length > 0
-                        ? `${((reviews.filter(review => review.locality === location).length / reviews.length) * 100).toFixed(1)}% Users in ${location}`
-                        : `No users in ${location}`}
+                        ? `${((reviews.filter(review => review.locality === selectedLocation).length / reviews.length) * 100).toFixed(1)}% Users in ${selectedLocation}`
+                        : `No users in ${selectedLocation}`}
                 </Typography>
                     <br></br>
                     <Divider/>

@@ -11,6 +11,7 @@ const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
+const locationRouter = require('./routes/locationRoutes');
 
 console.log('app.js has been loaded!');
 
@@ -78,7 +79,9 @@ app.use((req, res, next) => {
 
 app.use('/users', userRouter);
 app.use('/review', reviewRouter);
-app.use('/plan', planRouter)
+app.use('/plan', planRouter);
+app.use('/locations', locationRouter);
+
 app.all('*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
