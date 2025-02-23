@@ -1,34 +1,36 @@
 import React, {useEffect} from 'react';
-import jwt_decode from "jwt-decode";
-import { makeStyles,useTheme } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from '@material-ui/icons/Menu';
+import { jwtDecode } from "jwt-decode";
+import { makeStyles,useTheme } from '@mui/styles';
+import Drawer from '@mui/material/Drawer';
+import AppBar from '@mui/material/AppBar';
+import CssBaseline from '@mui/material/CssBaseline';
+import Toolbar from '@mui/material/Toolbar';
+import List from '@mui/material/List';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from '@mui/icons-material/Menu';
 import Footer from '../footer/Footer'
-import {AccountCircle} from "@material-ui/icons";
+import {AccountCircle} from "@mui/icons-material";
 import Login from "../authentication/Login";
 import SignUp from "../authentication/SignUp";
 import CompanyProfile from "../authentication/CompanyProfile";
-import FeedbackIcon from '@material-ui/icons/Feedback';
-import InfoIcon from '@material-ui/icons/Info';
+import FeedbackIcon from '@mui/icons-material/Feedback';
+import InfoIcon from '@mui/icons-material/Info';
 import Logout from "../authentication/Logout";
-import {Switch, Route, useHistory} from "react-router";
+import {Routes, Route} from "react-router";
 import Home from "../Home";
 import About from "../About";
 import Plans from "../Plans/Plans"
-import {Brightness4, Brightness7} from "@material-ui/icons";
+import {Brightness4, Brightness7} from "@mui/icons-material";
 import {ThemeContext} from "../../context/ThemeContext";
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import Profile from '../Profile';
+import { useNavigate } from "react-router-dom";
+
 
 
 const drawerWidth = 240;
@@ -100,18 +102,20 @@ const Navbar = ()=>{
     const [openProfile, setOpenProfile] = React.useState(false);
     const handleProfileClickOpen = () => setOpenProfile(true);
     const handleDrawerToggle = () => setOpen(!open);
-    const history = useHistory();
+    const history = useNavigate();
     const setLogin = ()=>setLoggedIn(loggedIn=>!loggedIn);
     const [token,setToken] = React.useState(localStorage.getItem('token'))
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         if(token === null) {
-            history.push('/login');
+            navigate('/login');
             setLoggedIn(false)
             setTitle("RaterNet")
         } else{
-            let user = jwt_decode(token);
-            history.push('/');
+            let user = jwtDecode(token);
+            navigate('/');
             setLoggedIn(true)
             setTitle(user.asn)
         }
@@ -159,16 +163,16 @@ const Navbar = ()=>{
                 <div className={classes.drawerContainer}>
                     <List>
                         {loggedIn ?  <ListItem button key={'Profile'} onClick={()=>{
-                            history.push('/profile')
+                            navigate('/profile')
                         }}>
                             <ListItemIcon> <AccountCircle/></ListItemIcon>
                             <ListItemText primary={'Profile'} />
                         </ListItem>: null}
-                        {loggedIn ?  <ListItem button key={'Plans'} onClick={() => history.push('/plans')}>
+                        {loggedIn ?  <ListItem button key={'Plans'} onClick={() => navigate('/plans')}>
                             <ListItemIcon><FeedbackIcon/></ListItemIcon>
                             <ListItemText primary={'Plans'}/>
                         </ListItem>: null}
-                        <ListItem button key={'About'} onClick={() => history.push('/about')}>
+                        <ListItem button key={'About'} onClick={() => navigate('/about')}>
                             <ListItemIcon><InfoIcon/></ListItemIcon>
                             <ListItemText primary={'About'} />
                         </ListItem>
@@ -185,15 +189,15 @@ const Navbar = ()=>{
                 alignItems : 'center'
             }}>
                 <Toolbar variant='dense'/>
-                <Switch>
-                    <Route exact path='/' component={Home}/>
-                    <Route exact path='/about' component={About}/>
-                    <Route exact path='/login' component={()=>
-                    <Login setloggedIn={setLogin}  
-                        setToken={setToken}/>}/>
-                    <Route exact path='/profile' component={Profile}/>
-                    <Route exact path='/plans' component={Plans}/>
-                </Switch>
+                <Routes>
+                    <Route exact path='/' element={<Home />}/>
+                    <Route exact path='/about' element={<About />}/>
+                    <Route exact path='/login' element={
+                        <Login setloggedIn={setLogin} setToken={setToken} />
+                    }/>
+                    <Route exact path='/profile' element={<Profile />}/>
+                    <Route exact path='/plans' element={<Plans />}/>
+                </Routes>
             </main>
             
         </div>

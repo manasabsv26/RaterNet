@@ -1,22 +1,22 @@
 import React,{useEffect} from "react";
 import {useDispatch,useSelector} from "react-redux";
 import formValidation from '../utils/formValidation';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import IconButton from '@material-ui/core/IconButton';
-import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import jwt_decode from "jwt-decode";
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import IconButton from '@mui/material/IconButton';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import { jwtDecode } from "jwt-decode";
 import {
     Typography,
     Grid,
     TextField,
-    makeStyles,
     Paper,
     Avatar,
     Button
-} from "@material-ui/core";
+} from "@mui/material";
+import { makeStyles } from '@mui/styles';
 import { useState } from "react";
 import ViewPlans from './ViewPlans'
 import {dummy_plans} from '../../dummy-data/plan'
@@ -110,7 +110,7 @@ const Plans = (props) => {
             />
             <input accept="image/*" className={classes.input} id="icon-button-file" type="file" onChange={handlefileUpload}/>
             <label htmlFor="icon-button-file">
-              <IconButton color="primary" aria-label="upload picture" component="span">
+              <IconButton color="primary" aria-label="upload picture" element="span">
                 <PhotoCamera fontSize="large"/>
               </IconButton>
             </label>
@@ -130,7 +130,7 @@ const Plans = (props) => {
       }
 
     React.useEffect(()=>{
-        let user = jwt_decode(token);
+        let user = jwtDecode(token);
         getPlans(user.id) 
     },[dispatch])
 

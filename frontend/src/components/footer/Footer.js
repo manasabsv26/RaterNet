@@ -1,8 +1,8 @@
 import React from 'react';
-import * as UI from '@material-ui/core';
-import * as UIIcons from '@material-ui/icons'
-import * as UIStyles from '@material-ui/core/styles'
-import NetworkCheckIcon from '@material-ui/icons/NetworkCheck';
+import * as UI from '@mui/material';
+import * as UIIcons from '@mui/icons-material'
+import * as UIStyles from '@mui/styles'
+import NetworkCheckIcon from '@mui/icons-material/NetworkCheck';
 
 const useStyles = UIStyles.makeStyles((theme) => ({
   footer: {
@@ -69,44 +69,55 @@ const useStyles = UIStyles.makeStyles((theme) => ({
 }));
 
 
-const Footer=props=>{
+const Footer = (props) => {
   const classes = useStyles();
-  const icons=[
-   <UIIcons.Instagram fontSize='large' color='primary'/>,
-   <UIIcons.Facebook fontSize='large' color='primary'/>,
-    <UIIcons.LinkedIn fontSize='large' color='primary'/>
-  ]
-  const list = ['Profile','Plans','Customer Support','About']
+  
+  const icons = [
+    <UIIcons.Instagram fontSize="large" color="primary" />,
+    <UIIcons.Facebook fontSize="large" color="primary" />,
+    <UIIcons.LinkedIn fontSize="large" color="primary" />,
+  ];
+  
+  const list = ["Profile", "Plans", "Customer Support", "About"];
+  
   return (
     <footer className={classes.footer}>
       <UI.Container maxWidth="lg" className={classes.container}>
         <div className={classes.logo}>
-          <UI.IconButton
-            color="inherit">
-             <NetworkCheckIcon fontSize='large'/>
+          <UI.IconButton color="inherit">
+            <NetworkCheckIcon fontSize="large" />
           </UI.IconButton>
-          <UI.Typography variant="h5">
-              RaterNet
-          </UI.Typography>
+          <UI.Typography variant="h5">RaterNet</UI.Typography>
         </div>
+        
+        {/* ✅ Added unique key in list.map() */}
         <div className={classes.list}>
-          {list.map(item=>(
-            <UI.Typography variant='subtitle1' color='inherit' className={classes.listItem}>
+          {list.map((item, index) => (
+            <UI.Typography
+              key={index} // ✅ Unique key added
+              variant="subtitle1"
+              color="inherit"
+              className={classes.listItem}
+            >
               {item}
             </UI.Typography>
-            ))}
+          ))}
         </div>
+        
         <div className={classes.grow} />
+        
+        {/* ✅ Added unique key in icons.map() */}
         <div className={classes.info}>
-            {icons.map(icon=>(
-                <UI.IconButton color="primary">
-                {icon}
-                </UI.IconButton>
-            ))}
-        </div> 
+          {icons.map((icon, index) => (
+            <UI.IconButton key={index} color="primary"> {/* ✅ Unique key added */}
+              {icon}
+            </UI.IconButton>
+          ))}
+        </div>
       </UI.Container>
     </footer>
   );
-}
+};
+
 
 export default Footer;

@@ -1,17 +1,17 @@
 import React from "react";
-import {Typography} from "@material-ui/core";
-import Chip from '@material-ui/core/Chip';
+import {Typography} from "@mui/material";
+import Chip from '@mui/material/Chip';
 import { 
     Grid,
-    makeStyles,
     Paper,
     Divider,
     Box,
     Button
-} from "@material-ui/core";
+} from "@mui/material";
+import { makeStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;

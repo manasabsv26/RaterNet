@@ -1,18 +1,18 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import useTheme from "@material-ui/core/styles/useTheme";
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import useTheme from "@mui/styles/useTheme";
 import { useSnackbar } from "notistack";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 const Logout = ({ open, setOpen, setLoggedIn,setDrawerOpen ,setTitle}) => {
     const theme = useTheme();
     const {enqueueSnackbar, closeSnackbar} = useSnackbar();
-    let history = useHistory();
+    const navigate = useNavigate();
 
     const handleClose = () => setOpen(false);
 
@@ -24,7 +24,7 @@ const Logout = ({ open, setOpen, setLoggedIn,setDrawerOpen ,setTitle}) => {
         setTimeout(() => enqueueSnackbar('Logged out Successfully!', {variant: 'success', key: 'logged_out'}), 3000);
         setTimeout(() => closeSnackbar('logged_out'), 6000);
         setTimeout(() => setLoggedIn(false), 3000);
-        //setTimeout(() => history.push('/login'),3000);
+        //setTimeout(() => navigate('/login'),3000);
         setDrawerOpen(false);
         setOpen(false);
     }

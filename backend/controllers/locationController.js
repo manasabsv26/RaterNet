@@ -14,7 +14,7 @@ exports.createLocation = catchAsync(async (req,res,next)=>{
     })
 });
 
-// Get plans by Company ID GET /plan/:company-id
+// Get locations by Company ID GET /location/:company-id
 exports.getLocationsById = catchAsync(async(req, res, next) => {
     const id = req.params.id
     const locations = await Location.find({company_id : id})

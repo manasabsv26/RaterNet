@@ -1,4 +1,4 @@
-import jwt_decode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 export const FETCH_PLANS = 'FETCH_PLANS';
 export const ADD_PLAN = 'ADD_PLAN';
 export const UPDATE_PLAN = 'UPDATE_PLAN';
@@ -41,7 +41,7 @@ export const addPlan = (plan,file)=>{
     data.append('planData',JSON.stringify(plan));
     data.append('planFile',file);*/
     const token = localStorage.getItem("token");
-    let user = jwt_decode(token);
+    let user = jwtDecode(token);
     plan.company_id = user.id;
     const data = JSON.stringify(plan)
 
@@ -74,7 +74,7 @@ export const updatePlan = (plan)=>{
     return async dispatch=>{
         const plan_copy = plan
         const token = localStorage.getItem("token");
-        let user = jwt_decode(token);
+        let user = jwtDecode(token);
         plan.company_id = user.id;
         const data = JSON.stringify(plan)
 

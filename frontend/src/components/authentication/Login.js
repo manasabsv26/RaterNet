@@ -1,16 +1,18 @@
 import React,{useState} from 'react';
 import {useDispatch} from 'react-redux'
-import Button from '@material-ui/core/Button';
-import {Grid,Paper,Typography} from '@material-ui/core'
+import Button from '@mui/material/Button';
+import {Grid,Paper,Typography} from '@mui/material'
 import { useSnackbar } from "notistack";
-import TextField from '@material-ui/core/TextField';
-import IconButton from "@material-ui/core/IconButton";
-import {Visibility, VisibilityOff} from "@material-ui/icons";
-import { useHistory } from "react-router";
+import TextField from '@mui/material/TextField';
+import IconButton from "@mui/material/IconButton";
+import {Visibility, VisibilityOff} from "@mui/icons-material";
 import {ThemeContext} from "../../context/ThemeContext";
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/styles';
 import {loginUser} from '../../redux/actions/auth';
 import formValidation from '../utils/formValidation';
+import { useNavigate } from "react-router-dom";
+import { styled } from "@mui/material/styles";
+
 
 const useStyles = makeStyles(theme=>({
     logo : {
@@ -40,7 +42,7 @@ const fieldsValidation = {
 }
 
 const Login = ({setloggedIn,setToken}) => {
-    const history = useHistory();
+    const navigate = useNavigate();
     const classes = useStyles();
     const {dark, toggleTheme} = React.useContext(ThemeContext);
     const dispatch = useDispatch();
@@ -107,7 +109,7 @@ const Login = ({setloggedIn,setToken}) => {
                 setloggedIn();
                 setToken(responseData.token);
     
-                history.push('/'); // Redirect to homepage
+                navigate('/'); // Redirect to homepage
             } catch (e) {
                 closeSnackbar('logging_in');
                 enqueueSnackbar(e.message, { variant: 'error', key: 'error' });
@@ -165,7 +167,7 @@ const Login = ({setloggedIn,setToken}) => {
                     </Button>
                     </Paper>
                 </Grid>
-                <Grid item md={6} xs={0} align="center" className={classes.logo}>
+                <Grid item md={6} xs={0} justifyContent="center" className={classes.logo}>
                 {dark ? <img src='rnlogod.png'/> 
                 : <img src='rnlogo.png'/>}
                 </Grid>

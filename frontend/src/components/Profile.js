@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useHistory } from "react-router-dom";
-import jwt_decode from "jwt-decode";
+import { useParams, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import {
     Typography,
@@ -16,14 +16,14 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle
-} from "@material-ui/core";
+} from "@mui/material";
 
 const indianStates = [
     "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"
 ];
 
 const Profile = () => {
-    const history = useHistory();
+    const navigate = useNavigate();
     const token = localStorage.getItem("token");
     const [user, setUser] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -45,7 +45,7 @@ const Profile = () => {
                 fetchLocations(userData._id);
             } catch (error) {
                 console.error("Error fetching user details:", error);
-                history.push("/login");
+                navigate("/login");
             }
         };
 
@@ -60,18 +60,18 @@ const Profile = () => {
         };
 
         if (token) {
-            const decodedUser = jwt_decode(token);
+            const decodedUser = jwtDecode(token);
             const asn = decodedUser.asn;
 
             if (asn) {
                 fetchUserDetails(asn);
             } else {
-                history.push("/login");
+                navigate("/login");
             }
         } else {
-            history.push("/login");
+            navigate("/login");
         }
-    }, [token, history]);
+    }, [token, navigate]);
 
     const handleEditToggle = () => setIsEditing(!isEditing);
 

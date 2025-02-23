@@ -1,31 +1,34 @@
 import React from "react";
-import {ThemeProvider, createMuiTheme, colors, CssBaseline} from "@material-ui/core";
+import {ThemeProvider, createTheme , colors, CssBaseline} from "@mui/material";
 import Navbar from "./components/navigation/Navbar";
-import {blue, red} from "@material-ui/core/colors";
+import {blue, red} from "@mui/material/colors";
 import {ThemeContext} from "./context/ThemeContext";
 import './App.css';
-import {createStore, combineReducers, applyMiddleware} from 'redux';
+import {combineReducers} from 'redux';
 import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 import logger from 'redux-logger';
 import AuthReducer from "./redux/reducers/auth";
 import PlansReducer from "./redux/reducers/plans";
+
+import { configureStore } from "@reduxjs/toolkit";
 //import ReviewReducer from "./redux/reducers/reviews"
 
-const store = createStore(
-  combineReducers({
-    auth : AuthReducer,
-    plans : PlansReducer
-  }),
-  applyMiddleware(thunk, logger)
-);
+const rootReducer = combineReducers({
+  auth: AuthReducer,
+  plans: PlansReducer,
+});
 
-
+const store = configureStore({
+  reducer: rootReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(thunk, logger),
+});
 
 function App() {
   const {dark} = React.useContext(ThemeContext);
 
-  const theme = createMuiTheme({
+  const theme = createTheme ({
     typography: {
       fontFamily: `"Poppins", sans-serif`,
       fontSize: 14,
@@ -34,7 +37,7 @@ function App() {
       fontWeightMedium: 500
     },
     palette: {
-      type: dark ? 'dark' : 'light',
+      mode: dark ? 'dark' : 'light',
       primary: {
         main: dark?blue[300]:blue[500],
       },
@@ -42,13 +45,15 @@ function App() {
         main: '#ffc107',
       },
     },
-    overrides: {
+    components: {
       MuiTypography: {
-        body2: {
-          fontSize: [15, "!important"]
-        }
-      }
-    }
+        styleOverrides: {
+          body2: {
+            fontSize: "15px !important", // ✅ Correct format
+          },
+        },
+      },
+    },
   })
   //#64b5f6
 

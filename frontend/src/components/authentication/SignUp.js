@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch} from 'react-redux';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from "@material-ui/core/IconButton";
-import { useHistory } from "react-router";
-import {Visibility, VisibilityOff} from "@material-ui/icons";
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from "@mui/material/IconButton";
+import { useNavigate } from "react-router-dom";
+import {Visibility, VisibilityOff} from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 import {SignUpUser} from "../../redux/actions/auth"
 import formValidation from '../utils/formValidation';
@@ -78,7 +78,7 @@ const SignUp = ({ open, setOpen }) => {
     const [errors, setErrors] = useState({})
     const [visible, setVisible] = useState(false);
     const dispatch = useDispatch();
-    const history = useHistory();
+    const navigate = useNavigate();
     const handleClose = () => setOpen(false);
     
 
@@ -157,7 +157,7 @@ const SignUp = ({ open, setOpen }) => {
 
             // Store token if needed
             localStorage.setItem('token', responseData.token);
-            history.push('/');
+            navigate('/');
 
         } catch (error) {
             setTimeout(() => enqueueSnackbar(error.message, {

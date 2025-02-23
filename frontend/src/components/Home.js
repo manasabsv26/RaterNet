@@ -1,4 +1,4 @@
-import React,{useEffect, useState} from "react";
+import React,{useEffect, useState, useRef } from "react";
 import {useDispatch,useSelector} from "react-redux";
 import {
     Typography,
@@ -8,21 +8,21 @@ import {
     Divider,
     Box,
     Button
-} from "@material-ui/core";
+} from "@mui/material";
 import { BarChart,Bar, XAxis, YAxis,CartesianGrid,Tooltip,Legend,LineChart,Line} from 'recharts';
-import {Map,GoogleApiWrapper} from 'google-maps-react';
-import jwt_decode from "jwt-decode";
-import Rating from '@material-ui/lab/Rating';
-import Chip from '@material-ui/core/Chip';
+import { jwtDecode } from "jwt-decode";
+import Rating from '@mui/material/Rating';
+import Chip from '@mui/material/Chip';
 import {fetchReviews} from '../redux/actions/reviews'
 import Loading from './Loading/Loading'
 import Error from './Error/Error';
-import Geocode from 'react-geocode'
+import Geocode from 'react-geocode';
 import axios from 'axios'
-import { useHistory } from "react-router";
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
-require('dotenv').config({ debug: true })
+import { useNavigate } from "react-router-dom";
+import { MenuItem, Select, FormControl, InputLabel } from "@mui/material";
+import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 
+console.log("outside geocode", Geocode)
 const mapContainerStyle = {
     width: "100%",
     height: "50vh",
@@ -30,10 +30,13 @@ const mapContainerStyle = {
 
 const defaultCenter = { lat: 19.076, lng: 72.8777 };
 
+
+
 const Home = (props) => {
-    const history = useHistory();
+    const navigate = useNavigate();
     const token = localStorage.getItem('token');
     const [locations, setLocations] = useState([]);
+    const [locationCoords, setLocationCoords] = useState([]);
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [reviews, setReviews] = useState([]);
     const [barData,setbarData] = React.useState([]);
@@ -41,6 +44,11 @@ const Home = (props) => {
     const [loading,setLoading] = React.useState(false);
     const [error,setError] = React.useState(null);
     const [services,setServices] = React.useState({});
+
+
+    const { isLoaded, loadError } = useJsApiLoader({
+        googleMapsApiKey: process.env.REACT_APP_API_URL,
+    });
 
     const baseUrl = "http://localhost:7000"; 
 
@@ -55,8 +63,17 @@ const Home = (props) => {
             if (locations.length === 0) {
                 return { lat: 19.076, lng: 72.8777 }; // Default to Mumbai if no locations found
             }
+
+            if (locations.length > 0){
+                setLocations(locations)
+            }
+
+            if (locations.length > 0) {
+                setSelectedLocation(locations[0].address_line1+ ", "+ locations[0].city + ", " + locations[0].state + ", " + locations[0].pincode); 
+            }
     
             // ✅ Convert addresses to coordinates using Geocode API
+            console.log("Geocode object:", Geocode);
             Geocode.setApiKey(process.env.REACT_APP_API_URL);
             Geocode.setLanguage("en");
             
@@ -73,6 +90,10 @@ const Home = (props) => {
             });
     
             const coordinates = (await Promise.all(locationPromises)).filter(coord => coord !== null);
+
+            if(coordinates.length >0){
+                setLocationCoords(coordinates);
+            }
             
             console.log("Mapped coordinates:", coordinates); // Debugging
     
@@ -149,39 +170,38 @@ const Home = (props) => {
         const fetchReviews = async () => {
             if (token) {
                 try {
-                    const user = jwt_decode(token);
-                    const data = await getReviews(user.id, setInitialLocation());
+                    const user = jwtDecode(token);
+                    const data = await getReviews(user.id, "Mumbai");
                     setReviews(data); 
                     
                 } catch (error) {
                     console.error('Error fetching reviews:', error);
                 }
             } else {
-                history.push('/login');
+                navigate('/login');
             }
         };
 
         const fetchLocations = async () => {
             if(token){
                 try{
-                    const user =jwt_decode(token);
+                    const user =jwtDecode(token);
+                    console.log("user:")
+                    console.log(user)
                     const coords = await setInitialLocation(user.id);
-                    setLocations(coords);
+                    //setLocations(coords);
 
-                    if (coords.length > 0) {
-                        setSelectedLocation(coords[0]); 
-                    }
                 } catch (error){
                     console.error('Error fetching locations');
                 }
             } else {
-                history.push('/login')
+                navigate('/login')
             }  
         };
 
         fetchReviews();
         fetchLocations();
-    }, [token, history]);
+    }, [token, navigate]);
 
     const displayData = () => {
         let averages = {
@@ -259,8 +279,15 @@ const Home = (props) => {
     
     const handleLocChange = (e)=>setSelectedLocation(e.target.value);
     const handleSearch = async ()=>{
-        let user = jwt_decode(token);
-        await getReviews(user.id,selectedLocation);
+
+        if (!selectedLocation) {
+            console.log("No location selected!");
+            return;
+        }
+    
+        console.log("Searching for:", selectedLocation);  
+        let user = jwtDecode(token);
+        await getReviews(user.id, selectedLocation);
     }
 
     if(error){
@@ -269,6 +296,10 @@ const Home = (props) => {
 
     if(loading){
         return <Loading message = "Loading Your Plans"/>
+    }
+
+    if (loadError) {
+        return <Typography color="error">Error loading Google Maps</Typography>;
     }
 
     return (
@@ -280,22 +311,63 @@ const Home = (props) => {
                         display:'flex',
                         justifyContent : 'space-between'
                     }}>
-                        <TextField onChange={handleLocChange} label="Search location..." variant="outlined" fullWidth/>
-                        <Button variant='contained' color='primary' onClick={handleSearch}>Search</Button>
+                        {/* Dropdown for Selecting Location */}
+                        <FormControl fullWidth variant="outlined">
+                            <InputLabel>Select Location</InputLabel>
+                            <Select
+                                defaultValue=""
+                                value={selectedLocation || ""}
+                                onChange={(e) => setSelectedLocation(e.target.value)} // ✅ Store as a string
+                                label="Select Location"
+                            >
+                                {locations && locations.length > 0 ? (
+                                    locations.map((location, index) => {
+                                        // ✅ Ensure the location properties are valid
+                                        const locationString = location.address_line1 && location.city && location.state && location.pincode
+                                            ? `${location.address_line1}, ${location.city}, ${location.state}, ${location.pincode}`
+                                            : "Invalid Location";
+
+                                        return (
+                                            <MenuItem 
+                                                key={index} 
+                                                value={locationString}
+                                            >
+                                                {locationString}
+                                            </MenuItem>
+                                        );
+                                    })
+                                ) : (
+                                    <MenuItem disabled>No Locations Available</MenuItem>
+                                )}
+                            </Select>
+                        </FormControl>
+
+                        {/* Search Button */}
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleSearch}
+                            disabled={!selectedLocation} // Prevent searching if no location is selected
+                            style={{ marginLeft: 10 }}
+                        >
+                            Search
+                        </Button>
                     </div>
+                    
                     <Grid item xs={12} style={{ position: "relative", height: "50vh" }}>
-                        <LoadScript googleMapsApiKey={process.env.REACT_APP_API_URL}>
+                        {isLoaded ? (
                             <GoogleMap
                                 mapContainerStyle={mapContainerStyle}
                                 zoom={10}
-                                center={locations[0] || defaultCenter} // Center on first location
+                                center={locationCoords[0] || defaultCenter}
                             >
-                                {/* Render markers for all locations */}
-                                {locations.map((coord, index) => (
+                                {Array.isArray(locationCoords) && locationCoords.map((coord, index) => (
                                     <Marker key={index} position={coord} />
                                 ))}
                             </GoogleMap>
-                        </LoadScript>
+                        ) : (
+                            <Typography>Loading Map...</Typography>
+                        )}
                     </Grid>
                     <Grid item xs={12} style={{position: 'relative',marginTop : 20}}>
                         <Box elevation={1} style={{padding:20,height: '45vh',overflow:'auto',scrollBehavior : 'smooth'}}>
@@ -367,9 +439,4 @@ const Home = (props) => {
     )
 }
 
-export default GoogleApiWrapper({
-    apiKey: process.env.REACT_APP_API_URL,
-    language: 'en',
-    v: '3',                       // API version
-    loading: 'async'              //This enables async loading
-})(Home);
+export default Home;

@@ -1,8 +1,8 @@
 import React from 'react';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Typography from '@material-ui/core/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
+import { makeStyles } from "@mui/styles";
+import Paper from "@mui/material/Paper";
+import Typography from '@mui/material/Typography';
 
 const useStyles = makeStyles(theme => ({
     paper:{
